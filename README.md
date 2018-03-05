@@ -9,3 +9,6 @@
 
 #### fabric
 fabric是一个自动化部署的工具，本目录中展示了fabric使用demo。
+
+#### redis_del_pattern.py
+redis批量正则匹配删除脚本
