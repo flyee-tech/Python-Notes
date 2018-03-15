@@ -10,8 +10,8 @@ PREFIX = 'http://peierlong-blog.oss-cn-hongkong.aliyuncs.com/'
 
 
 def uploadToOSS(name, path):
-    accessKeyId = "accessKeyId"
-    accessKeySecret = "accessKeySecret"
+    accessKeyId = "LTAIsHUzkJ92tKOj"
+    accessKeySecret = "Um4DUv9lYzbjsIpb8BHsjQ3NK055xH"
     # endpoint = "oss-cn-qingdao-internal.aliyuncs.com"
     endpoint = "oss-cn-hongkong.aliyuncs.com"
     bucket = "peierlong-blog"
