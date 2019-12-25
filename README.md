@@ -1,17 +1,12 @@
-## The python base study
+## 基础操作
+  
+### 执行命令
+```python
+# 这是简单的方式，还有其他方式，可以网上查询。
+os.system('cd .. && hexo clean && hexo g && hexo d')
+```
 
-> build by python 3.6.1
 
-### The package declaration
+## Pandas
 
-#### base
-记录学习python基础知识相关笔记，目的是快速熟悉python基础语法，函数，模块等基础知识。为以后使用python和看python的代码做一些基础的准备。
-
-#### fabric
-fabric是一个自动化部署的工具，本目录中展示了fabric使用demo。
-
-#### redis_del_pattern.py
-redis批量正则匹配删除脚本
-
-#### oss_2_mk.py
-上传oss脚本
+## Numpy
