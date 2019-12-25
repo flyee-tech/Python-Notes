@@ -24,3 +24,7 @@ lib/
 dist/
 logs/
 out/
+
+__pycache__/
+
+.python-version
