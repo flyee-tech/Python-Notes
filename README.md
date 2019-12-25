@@ -63,6 +63,17 @@ f.close()
 print(response)
 ```
 
+### simple parse xml
+
+```python
+from xml.etree.ElementTree import parse
+doc = parse('/Users/peiel/blog/public/sitemap.xml')
+for item in doc.iter():
+    item.findtext('loc')
+    item.find()
+    item.tag()
+```
+
 ## Pandas
 
 ### Query data from mysql
