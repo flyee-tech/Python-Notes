@@ -1,10 +1,13 @@
 ## 基础操作
-  
-### 执行命令
+
+<details>
+  <summary>### 执行命令</summary>
 ```python
 # 简单的方式，还有其他方式，网上查询。
 os.system('cd .. && hexo clean && hexo g && hexo d')
 ```
+</details>
+
 ### 读写文件
 
 ```python
