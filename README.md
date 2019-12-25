@@ -1,27 +1,80 @@
-## 基础操作
+# Python-Nodes
 
-### 执行命令
+> build by: python3.X+
+
+## base opt
+
+### exec command
 
 ```python
-# 简单的方式，还有其他方式，网上查询。
+# has other way, to google search!
 os.system('cd .. && hexo clean && hexo g && hexo d')
 ```
 
-### 读写文件
+### file read write
 ```python
 with open('$path', 'r') as f:
-    # 读取全部
+    # read all
     print(f.read())
-    # 行读取 
+    # read by line 
     for line in f.readlines():
-        print(line.strip()) # 把末尾的'\n'删掉
+        print(line.strip()) # remove end '\n'
 ```
 ```python
 with open('$path', 'w') as f:
     f.write('Hello, world!')
 ```
 
+### MySQL
+
+```python
+import pymysql
+conn = pymysql.connect(host=str(host), port=3306, user=str(user), passwd=str(passwd), db='quantify_data')
+cursor = conn.cursor()
+cursor.execute('insert sql')
+conn.commit()
+conn.close()
+```
+
+### JSON
+
+```python
+json_obj = json.loads(json_str)
+json_str = json.dumps([T])
+```
+
+### MD5
+
+```python
+import hashlib
+md5 = hashlib.md5('$sth').hexdigest()
+```
+
+### HTTP
+
+```python
+import urllib.request
+# post submit a bytes data
+host = 'http://blog.peiel.com/'
+req = urllib.request.Request(host, bytes(str_urls, encoding="utf8"), {'Content-Type': 'text/plain', 'Content-Length': len(str_urls)})
+f = urllib.request.urlopen(req)
+response = f.read()
+f.close()
+print(response)
+```
 
 ## Pandas
+
+### Query data from mysql
+
+```python
+df = pd.read_sql(sql='select * from ...', con=conn)
+```
+
+### Convert a column data to a list
+
+```python
+list(df['column_name'])
+```
 
 ## Numpy
