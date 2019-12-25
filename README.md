@@ -75,6 +75,7 @@ df = pd.read_sql(sql='select * from ...', con=conn)
 
 ```python
 list(df['column_name'])
+df['column_name'].tolist()
 ```
 
 ## Numpy
