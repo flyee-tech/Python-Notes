@@ -1,0 +1,285 @@
+Now we're going to look at k-d trees,
+which is an extension of BSTs that allow us to do efficient
+processing of sets of points in space. And it's very flexible and
+very useful in lots of applications. So, now we're going to extend the API
+to talk about two-dimensional keys. So that's just, you can think of
+two-dimensional keys as a points in two-dimensional geometric space. We're going to talk about insertion and
+search. Now, we want to talk about deletion and
+then range search and range count. So we want to be able to insert and
+delete points, you can think of a two-dimensional key
+as a point in two-dimensional space. And we want to be able to find all keys
+that lie within a two-dimensional range, that's a rectangle,
+as I mentioned at the beginning. Or count the number of keys that
+lie in a two-dimensional range. So again, the geometric interpretation
+is the keys are points in the plane. And we have a 2d range
+is a rectangle oriented to align with the horizontal
+vertical axis. And we want to be able to find or
+count the points in a given rectangle. And this one has many,
+many applications, and we'll talk about some of them later on. And even if it's not points in the plane,
+just databases. You might ask for all the people
+with incomes between 1 million and 10 million who are between 40 and
+50 years of age. And this kind of algorithm, a data structure would be useful for
+that kind of situation too. So how are we going to solve this problem,
+implement this API. We build a data structure containing
+points that can efficiently support range searching and range counting. Well one easy way to do
+it is to just think about dividing space into a grid of squares. So, and I will pick a parameter M and divide space into
+an M-by-M grid of squares. And then process all the points, and make a list of points that
+are contained in each square. We can use a two-dimensional array
+to directly index relevant squares. And for insert, you just take (x,y),
+figure out which square it belongs to. Simply divide both coordinates by M, and
+then look in the two-dimensional array. And just to add the point to the list for
+corresponding square. And then range search is only find
+the squares that intersect the query and process the points in that square. And, depending on the value
+of the parameter, M, you have a space time trade-off. The amount of space required is N squared,
+for the grid plus N. You have to have a linked list element or
+whatever for each point. But then the time, though,
+gets divided by M squared, your number of points, M, are spread out
+over the M squared different squares. And so on average, you examined N
+over M squared points per square. So you don't want to make M too big,
+it'd be too much space. You don't want to make M too small,
+it'd be too much time. So what we want to choose is this square
+size that would best balance these two needs. And then, it's easy to see
+that what you should choose is M to be about square root of N. So then your space is within
+a constant factor of N and your time is constant. So if the points are randomly distributed,
+then this is ideal. It takes this linear time to
+initialize the data structure. And to insert and search, it takes
+constant time per point in the range. And this is absolutely a fine method
+that is not that difficult to implement, in the case that the points
+are evenly distributed. Unfortunately, it's usually the case in geometric data that the points
+are not evenly distributed. It's a well-known phenomenon known
+as clustering that says that the points aren't going to be evenly
+distributed all over the whole thing. In the case of the grid implementation,
+they might all fall in the same square. And so the average list length is short, this is
+like what we encountered with hashing. If you take all the points in one square, in 0 and all the rest of them,
+your average is still N over M squared. But they're all in that long list and you're going to have a slower
+algorithm if it's based on this. So we need a data-structure
+that more gracefully adapts to the distribution of the data. And again, it's well known that most
+geometric data has this kind of problem. So for example, here's some
+data which is cities in the US. It's got 13,000 points, but if you try
+to use the grid implementation for this you find that half
+the squares would be empty and half the points are in
+just 10% of the squares. So the clustering in the data is going to
+make the implementation inefficient. We need to adapt to the data. And this is very,
+very typical in geometric data, particularly in higher dimensional data,
+as we'll see in a minute. So people have developed all different
+kinds of methods for adapting in this way. And what we're going to look at
+as one of the most widely used, which is basically to use
+a tree to represent a recursive subdivision of the plain,
+of two-dimensional space. It's going to be recursive,
+it's going to be based on the points, the way in which we
+divide into halfplanes. In this one of many different algorithms
+that have been studied for this. But again it's a simple one and
+widely used. So for example,
+if you've played the game Doom or used a flight simulator that these types of graphical simulations and
+animations are made possible. Not only through the use
+of space-partitioning trees like 2d trees and quadtrees. And also in all different types
+of scientific data processing, these things are extremely important. Whenever you're processing geometric data, you're doing some kind
+of geometric search. Where's the closest thing? How am I going to find
+the closest thing efficiently? What things are nearby and so forth. So rest assured these types of
+algorithms lie at the heart of any program you use that is
+involving a lot of geometric data. So those are just two examples. So let's look at how it
+looks now..So 2d tree again, it's going to be a data
+structure based on a bunch of points that's going to facilitate
+efficient data processing at these points. So, just as we do for
+symbol tables where we take keys, now we're going to take points. And we're going to build a data
+structure based on these points. And the idea is to build a tree that corresponds to
+recursively partitioning the plane. So arbitrarily our first point,
+we're going to divide the plane into two parts based
+on a vertical line through that point. So now in the tree on the right there, all the points that fall to the left of the
+first plane are going to be on the left. And all the points that fall
+to the right of the first plane are going to be on the right. But then we get to the next point,
+we'll switch and we'll partition on a horizontal line. So now our second point in the tree, the left sub-tree corresponds to
+everybody below that horizontal line and the right sub-tree corresponds
+to everybody above it. Similar, if our third point comes
+on the left, again, we'll partition according to the horizontal line
+through that point on the left. So if we go left and then left, that
+means all the points to the left of 1 and above 3, so the square in the upper left
+is represented by that node in the tree. Again, now when we go to one level below,
+we switch again to vertical. Alternate between horizontal and
+vertical partitioning of the plane. So it's a regular binary search tree but
+it's got this interpretation based on the geometric data,
+where we switch which key we use for the comparison, the x coordinate or
+the y coordinate at each level. And that corresponds to this
+partitioning of the plane. So now 5 comes in, that's to the left of 4
+because it was partitioned at a vertical and 5's going to partition
+in a horizontal. And this is simple and completely well defined partitioning of the plane corresponding to a binary tree. Now the 9th point well it's to the left
+of 8, above 2 to the left of 8 and then corresponds to
+a horizontal partitioning. 10th point is to the right of 1,
+it's below 2 so we go to the left and it's to
+the right of 7, so we go to the right. So that's a way to build a binary tree corresponding to
+a partitioning of the plane. And it's really the same
+as a binary search tree, it's just that we alternate which
+coordinate we use as the key. At the even levels, we think of
+a vertical line, and the left sub-tree is all the points to the left and the right
+sub-tree is all the points to the right. On odd levels we use a horizontal line and
+the left sub-tree is all points below and the right sub-tree is all points above. And the code for this is the same as for
+binary search trees. It's simply which coordinate we use for
+the comparison that's the only difference. So that's 2d tree implementation. So now what about solving a problem like
+this, range search problem for a 2d tree. So now we have a query like this
+green rectangle and what we want to find is all of the points in the data
+structure that fall within that rectangle. Well, we're going to use the 2d
+tree represents our points and we're going to use the structure and
+definition of that tree to go ahead and help us find the points
+that are in the rectangle. If the root node lies in
+the rectangle then we're done, [COUGH]
+we can return that point. But we have to look on both sides to
+look for more, but if the rectangle lies to the left of the root node, then we only
+have to look on the left and so forth. So let's look at how this works in a demo. All right, so we're going to try to find
+all the points that are contained in that green query rectangle. So first thing is to check if our
+rectangle contains a node of the root, in this case it doesn't. So since its to the left of
+the splitting line of the root, we only have to search
+in the left sub-tree. Now we search the left sub-tree and
+we want to check if it contains point 3. That does not contain point 3 but
+now which sub-tree do we search? [COUGH]
+In this case, now the rectangle intersects our splitting line, so we have to search
+both sub-trees, both above and below. So first we search the left
+sub-tree that's the one below. Doe it contain point 4? No. It's to the left, so we only have to
+search the left sub-tree of point 4. And so we search to the left sub-tree and
+we check if it contains point 5 and it does, that's the one that we return. It also intersects the splitting line,
+so we have to search both the sub-trees. In this case they're both empty,
+so we're done with that. But now we have to go back and we have
+to search the other sub-tree of point 3. And that's the above. So now we check if point 6 in
+the rectangle, in this case, it's not. And is to the left, so we're going to have
+to search the left sub-tree of point 6 and that one is empty and
+now we return and we're done. So we don't always go
+down just one branch. If our splitting line hits our rectangle,
+we have to go down both branches. But still,
+this is a very efficient algorithm. Particularly, think about
+the rectangle being small, it's going to be not that different than
+a regular search in a binary search tree. All right, so what about the analysis
+of how long is this is going to take? Well, again, a typical case, rectangles
+are small that we're only going to examine really the path of the tree maybe
+a couple of other nodes along with path. And the running time will be proportional
+to the number of points returned, plus log N. With geometric data,
+the worse case can be bad, so like all the points could
+be arranged in a circle. All different types of problems might
+occur and with some difficulties, it's possible to prove that
+even if the tree's balanced, you can get a worse case
+proportional to square root of N. So analysis of 2d trees is
+a bit beyond our scope. But for many practical applications, they're easy to implement and worth using. Let's look at another using 2d
+trees to solve another problem, the so-called nearest neighbor search. So now instead of a rectangle
+we have a query point and our goal is to find the closest
+point to that point. So in this case our query point is
+over here in green and our algorithm's going to want to return point 5,
+that's the closest one to the query point. So let's see how that looks in a demo. So, again, we start at the root,
+and what do we want to do? Well, we're going to check. Whenever we're at a node, it represents a
+point, so we're going to check that point and we'll compute the distance from
+that point to our query point. And if that distance is less
+than the best found so far, then we'll keep that as the champion. So the first point that's the closest
+we found so far to the query point, so we'll save our number 1 as the distance. And we'll only worry about the possibility
+of finding something closer than that. And so just using that distance,
+we recursively search any part of the tree that
+could contain a closer point. [COUGH] And so
+that's what we'll continue to do. So in this case, the query point is
+to the left of the splitting line. And we'll always go towards
+the query point first. So in this case, we have to search both, there might possibly be a closer
+point than 1 over in the right. If you come straight across,
+there might be a closer point. We're going to have to look at both,
+as far as we know now. But we'll go towards the query point and
+see if we can find something closer. So in that case now we go to point 3, compute the distance of that
+point to the query point. It's closer, so
+we update 3 to be our new champion. And so now we're only going to
+look in parts of the tree that could give us a point that's
+closer to our query point than 3. Notice already that will mean
+when we get back to 0.1, we won't search the right subtree. because there could be no
+point on the right subtree, on the right of this splitting line,
+that's closer to the query point than 3. And so that idea of getting closer and
+closer to the query point is going to cut out different parts of
+the tree as we process. So, but anyway, starting at point 3,
+as far as we know, we're going to have to
+look at both subtrees. So sometimes we look at both subtrees,
+but as we get closer and closer, we only look at 1. So let's look at point 3 now. So again, go towards the query point, so I'll go to the top first,
+and that takes us to 6. 6 is not any closer than 3 was, so
+that's not going to update our champion. [COUGH] And so,
+we'll search 6 is left subtree, which is empty, and
+then its right subtree. And while the nearest neighbor can't be, we don't have to go down the right subtree
+at 6 because you can't have a point in that rectangle that's closer
+to the query point than 3. So, now we can return from that, and now we have to look at the bottom
+subtree associated with 3. And so, that takes us to 4,
+and that one is not closer, so we still have 3 as our current champion. So now we'll search the left
+subtree of 4 first because the query point is to the left
+of that splitting line. And that takes us to 5,
+and 5's our new champion. So that's the closest
+point that we know about. Could there be a node that's closer to our query point than 5 in
+the right subtree of 4? We have to go above, sorry, to look at
+the top subtree associated with 5 and we find that it's empty. And now we're back at 4, do we have
+to search the right subtree of 4? No, because there can't be a closer
+point than 5 in the right subtree of 4. So we're done with 4, and we come to 3. And now we, supposed to search and return from there, we're now at 1. Supposed to search the right subtree
+at 1 next, but we can prune that. Nearest neighbor couldn't be in there. So then we're done, and
+we found that the nearest neighbor is 5. And this is going to be very efficient
+because as we get closer and closer to the query point, we're cutting
+out all the sub queries that are away. And again, in practice, the running time of this algorithm
+is going to be close to logarithmic. So in typical cases, the running
+time of nearest neighbor search in a 2D tree is going to be
+proportional to logarithmic. It is possible to concoct cases, where you're going to have
+to examine all the points. For example,
+if they're all arranged in a circle and your query point's in the center or
+something of that sort. But for typical data, it's very efficient. Now we're going to look at an application
+where we simulate a phenomenon in nature, and this is, what kind of patterns
+do things like starlings and geese or cranes, or fish, or fire flies. How do they flock together? And we'll look at a simulation
+that corresponds to that. >> And then, when the moment is right, they behave in a way that
+should be impossible. [MUSIC] Wow. [MUSIC] And it happens everyday,
+right through the winter, just a couple of miles from my doorstep. How good is that? [MUSIC] >> So, this is a simple model developed
+by Craig Reynolds a while ago for simulating the situation called the boid. And the idea is to use three simple rules, you get something very close to
+this complex flocking behavior. So you have collision avoidance, where you always try to point
+away from the k nearest boids. You have centering, where you try to point near the center
+of mass of the k nearest boids. And velocity matching, where you update your velocity to
+the average of the k nearest boids. And that algorithm works like this. So, as that example shows,
+2D trees are extremely effective in quickly processing huge
+amounts of geometric data. And what's more,
+it expand to more dimensions. With a very simple modification,
+we can take a 2D tree and create a data structure known as a Kd
+tree, which even works for K dimensions. And the idea is,
+even if there's K dimension, what we'll do is recursively
+partition one dimension at a time. So that's called a Kd tree. And we use the same idea as for 2d trees,
+but instead of just cycling through horizontal vertical, we cycle through
+however many dimensions there are. So it's in three space,
+we use a plane and do above and below, and
+then simply cycle through the dimensions. At level i, we put on the left the points
+whose ith coordinates are less than p. And on the right, we put the points whose
+ith coordinates are greater than p. And cycle through the dimensions
+of level i mod k. We just use that dimension of
+the point to do the comparison. The implementation is simple,
+except for the comparison. And we get the same kind of partitioning
+for three dimensional data, so we could do Boyd's in three dimensions. Or for
+databases with large number of dimensions, you could do even much
+higher dimensional data and find nearest neighbors and
+do range searching extremely efficiently. It's a very efficient and
+simple data structure for processing k dimensional data
+that's very widely used and the whole idea is that data clusters,
+particularly in high dimensions. And also one point to make for
+this class is that this algorithm was discovered by an undergraduate
+in an algorithm school. So that's John Bentley who discovered
+this while an undergraduate at Stanford. And so it's a simple idea but
+expert scientists were struggling with dealing with huge
+amounts of geometric data. And Bentley found this way to
+process it efficiently that's been widely used ever since. In particular, just as another example,
+consider the idea of N-body simulation, which is
+a classic problem in physics where you've got N particles
+mutually affected by gravity. And basically, the computation is based on computing the interacting force for
+each pair of particles. And so, then there'll be
+mutual gravitational pull and this is what happens with a large number
+of particles in a certain simulation. And people understand properties of
+the universe by doing these kinds of calculations and comparing
+against what's observed in space. Now, but the thing is, for
+each pair of particles, so if you have N particles and you have to
+do it for each pair, that's N squared. So the progress of a scientific
+investigation is going to be affected by how quickly you can do this calculation
+for a large number of particles. There's a lot of particles
+out in the universe and you can't do a quadratic calculation for
+large N. So, another undergraduate in an algorithms
+class discovered this idea for N-body simulation and that's Andrew Appel. And his idea was that if some particle is
+way away from some cluster of particles, we can treat that cluster as
+a single aggregate particle. And not do the individual force
+calculation between our particle and every one of those in the aggregate. But use the center of mass and
+you get a very accurate [COUGH] approximation to
+the N-body doing that. And the algorithm that he used
+is based on 3d-trees with the N particles as nodes, and storing the center
+of the mass in the subtree in each node. And then, [COUGH] to compute
+the total force traversing the tree of all the information that you need,
+to complete the N-body calculation. But in time,
+much closer to N log N than to N squared. And that idea that I didn't need to
+take time proportional to N squared. But with a geometric algorithm like
+a 3d-tree you could get the time to n log n that enabled all sorts
+of new scientific investigation in this example of the use of
+algorithms to enable new research.
